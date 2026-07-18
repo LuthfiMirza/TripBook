@@ -1,0 +1,2 @@
+'use client';
+export default function Error({error,reset}:{error:Error;reset:()=>void}){return <main className="grid min-h-screen place-items-center px-6"><div className="rounded-2xl bg-white p-8 shadow"><h1 className="display text-3xl font-bold text-heading">Something went sideways</h1><p className="mt-3 text-red-600">{error.message}</p><button className="mt-5 rounded-full bg-accent px-5 py-3 font-bold" onClick={reset}>Try again</button></div></main>}

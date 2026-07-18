@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function NotFound(){return <main className="grid min-h-screen place-items-center px-6"><div className="text-center"><h1 className="display text-6xl font-black text-heading">404</h1><p className="mt-3">This TripBook route has flown away.</p><Link className="mt-6 inline-block rounded-full bg-accent px-6 py-3 font-bold text-heading" href="/">Back home</Link></div></main>}
