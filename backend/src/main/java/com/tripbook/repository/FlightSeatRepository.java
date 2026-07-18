@@ -1,14 +1,39 @@
 package com.tripbook.repository;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import com.tripbook.entity.FlightSeat;
 
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.QueryHint;
+
 public interface FlightSeatRepository extends JpaRepository<FlightSeat, Long> {
+
+    /**
+     * Booking locks the row pessimistically because the last available seats are
+     * high-contention inventory; optimistic locking would create retry storms
+     * across horizontally scaled backend instances.
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @QueryHints({
+            @QueryHint(name = "jakarta.persistence.lock.timeout", value = "3000"),
+            @QueryHint(name = "javax.persistence.lock.timeout", value = "3000")
+    })
+    @Query("""
+            SELECT s FROM FlightSeat s
+            JOIN FETCH s.flight f
+            WHERE f.id = :flightId AND s.seatNumber = :seatNumber
+            """)
+    Optional<FlightSeat> findByFlightIdAndSeatNumberForUpdate(
+            @Param("flightId") Long flightId,
+            @Param("seatNumber") String seatNumber);
 
     /**
      * Ordered by the seat_number's numeric row then its letter — NOT by id.
