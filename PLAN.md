@@ -33,7 +33,7 @@ This file is a sequential execution plan for Claude Code.
 - [x] Phase 9 — Frontend scaffold & auth
 - [x] Phase 10 — Frontend search & results
 - [x] Phase 11 — Frontend booking flow & my bookings
-- [ ] Phase 12 — Frontend polish & animation
+- [x] Phase 12 — Frontend polish & animation
 - [ ] Phase 13 — Unit tests
 - [ ] Phase 14 — Documentation & architecture diagram
 
