@@ -34,6 +34,7 @@ services:
       context: ../backend
     environment:
       INSTANCE_ID: backend-1
+      JAVA_TOOL_OPTIONS: -Dlogging.level.org.hibernate.SQL=DEBUG
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tripbook
       SPRING_DATASOURCE_USERNAME: tripbook
       SPRING_DATASOURCE_PASSWORD: tripbook
@@ -50,6 +51,7 @@ services:
       context: ../backend
     environment:
       INSTANCE_ID: backend-2
+      JAVA_TOOL_OPTIONS: -Dlogging.level.org.hibernate.SQL=DEBUG
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tripbook
       SPRING_DATASOURCE_USERNAME: tripbook
       SPRING_DATASOURCE_PASSWORD: tripbook
