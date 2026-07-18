@@ -31,7 +31,7 @@ This file is a sequential execution plan for Claude Code.
 - [x] Phase 7 — Concurrency proof (load test)
 - [x] Phase 8 — Kafka event-driven notifications
 - [x] Phase 9 — Frontend scaffold & auth
-- [ ] Phase 10 — Frontend search & results
+- [x] Phase 10 — Frontend search & results
 - [ ] Phase 11 — Frontend booking flow & my bookings
 - [ ] Phase 12 — Frontend polish & animation
 - [ ] Phase 13 — Unit tests
