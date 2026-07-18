@@ -3,10 +3,15 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RESULT_FILE="$ROOT_DIR/docs/concurrency-test-result.txt"
-exec > >(tee "$RESULT_FILE") 2>&1
+if [[ "${APPEND_RESULTS:-0}" == "1" ]]; then
+  exec > >(tee -a "$RESULT_FILE") 2>&1
+else
+  exec > >(tee "$RESULT_FILE") 2>&1
+fi
 
 BASE_URL="${BASE_URL:-http://localhost:8080}"
 N="${N:-50}"
+EXPECT_BOTH_INSTANCES="${EXPECT_BOTH_INSTANCES:-1}"
 FLIGHT_ID="${FLIGHT_ID:-1}"
 SEAT_NUMBER="${SEAT_NUMBER:-12F}"
 COMPOSE_DIR="$ROOT_DIR/infra"
@@ -50,6 +55,7 @@ echo "n: $N"
 echo "flight_id: $FLIGHT_ID"
 echo "seat_number: $SEAT_NUMBER"
 echo "flight_seat_id: $seat_id"
+echo "expect_both_instances: $EXPECT_BOTH_INSTANCES"
 
 echo "== Reset seat and related bookings =="
 psql_tripbook -v ON_ERROR_STOP=1 -c "DELETE FROM bookings WHERE flight_seat_id=$seat_id; UPDATE flight_seats SET status='AVAILABLE' WHERE id=$seat_id; SELECT id, seat_number, status FROM flight_seats WHERE id=$seat_id;"
@@ -89,9 +95,9 @@ cat "$TOKENS_FILE" | xargs -P "$N" -I {} bash -c '
 ' _ {}
 
 echo "== Status summary =="
-status_201="$(grep -h 'status=201' "$RESP_DIR"/*.meta | wc -l | tr -d ' ')"
-status_409="$(grep -h 'status=409' "$RESP_DIR"/*.meta | wc -l | tr -d ' ')"
-status_500="$(grep -h 'status=500' "$RESP_DIR"/*.meta | wc -l | tr -d ' ')"
+status_201="$(awk -F '[= ]' '$2 == 201 {count++} END {print count + 0}' "$RESP_DIR"/*.meta)"
+status_409="$(awk -F '[= ]' '$2 == 409 {count++} END {print count + 0}' "$RESP_DIR"/*.meta)"
+status_500="$(awk -F '[= ]' '$2 == 500 {count++} END {print count + 0}' "$RESP_DIR"/*.meta)"
 other_statuses="$(awk -F '[= ]' '{print $2}' "$RESP_DIR"/*.meta | sort | uniq -c)"
 echo "201_count=$status_201"
 echo "409_count=$status_409"
@@ -116,8 +122,10 @@ if [[ "$status_201" != "1" ]]; then echo "ASSERT_FAIL: expected exactly 1 HTTP 2
 if [[ "$status_409" != "$((N - 1))" ]]; then echo "ASSERT_FAIL: expected exactly $((N - 1)) HTTP 409"; failed=1; fi
 if [[ "$status_500" != "0" ]]; then echo "ASSERT_FAIL: expected 0 HTTP 500"; failed=1; fi
 if [[ "$booking_count" != "1" ]]; then echo "ASSERT_FAIL: expected exactly 1 booking row"; failed=1; fi
-if ! awk 'BEGIN{IGNORECASE=1} /^X-Instance-Id:/{gsub(/\r/, ""); print $2}' "$RESP_DIR"/*.headers | sort -u | grep -qx 'backend-1'; then echo "ASSERT_FAIL: backend-1 did not serve any request"; failed=1; fi
-if ! awk 'BEGIN{IGNORECASE=1} /^X-Instance-Id:/{gsub(/\r/, ""); print $2}' "$RESP_DIR"/*.headers | sort -u | grep -qx 'backend-2'; then echo "ASSERT_FAIL: backend-2 did not serve any request"; failed=1; fi
+if [[ "$EXPECT_BOTH_INSTANCES" == "1" ]]; then
+  if ! awk 'BEGIN{IGNORECASE=1} /^X-Instance-Id:/{gsub(/\r/, ""); print $2}' "$RESP_DIR"/*.headers | sort -u | grep -qx 'backend-1'; then echo "ASSERT_FAIL: backend-1 did not serve any request"; failed=1; fi
+  if ! awk 'BEGIN{IGNORECASE=1} /^X-Instance-Id:/{gsub(/\r/, ""); print $2}' "$RESP_DIR"/*.headers | sort -u | grep -qx 'backend-2'; then echo "ASSERT_FAIL: backend-2 did not serve any request"; failed=1; fi
+fi
 
 if [[ "$failed" -ne 0 ]]; then
   echo "RESULT=FAIL"
