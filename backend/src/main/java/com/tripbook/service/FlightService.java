@@ -47,7 +47,7 @@ public class FlightService {
         Flight flight = flightRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Flight not found: " + id));
 
-        List<SeatResponse> seats = flightSeatRepository.findByFlight_IdOrderById(id).stream()
+        List<SeatResponse> seats = flightSeatRepository.findSeatMapByFlightId(id).stream()
                 .map(SeatResponse::from)
                 .toList();
 
@@ -235,7 +235,7 @@ public class FlightService {
     public void deleteFlight(Long id) {
         Flight flight = flightRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Flight not found: " + id));
-        flightSeatRepository.deleteAll(flightSeatRepository.findByFlight_IdOrderById(id));
+        flightSeatRepository.deleteAll(flightSeatRepository.findSeatMapByFlightId(id));
         flightRepository.delete(flight);
     }
 }
