@@ -1,0 +1,23 @@
+# Phase 0 — Postgres only. Redis, Kafka, nginx and the backend instances are
+# added in later phases (5, 6, 8). Keep this file the single source of truth for
+# local infrastructure.
+services:
+  postgres:
+    image: postgres:16
+    container_name: tripbook-postgres
+    environment:
+      POSTGRES_DB: tripbook
+      POSTGRES_USER: tripbook
+      POSTGRES_PASSWORD: tripbook
+    ports:
+      - "5432:5432"
+    volumes:
+      - tripbook-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tripbook -d tripbook"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  tripbook-postgres-data:
