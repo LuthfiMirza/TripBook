@@ -4,10 +4,12 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tripbook.dto.FlightDetailResponse;
 import com.tripbook.dto.FlightSearchResponse;
 import com.tripbook.dto.PagedResponse;
 import com.tripbook.service.FlightService;
@@ -32,5 +34,10 @@ public class FlightController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return flightService.search(origin, destination, date, passengers, sort, page, size);
+    }
+
+    @GetMapping("/{id}")
+    public FlightDetailResponse getById(@PathVariable Long id) {
+        return flightService.getDetail(id);
     }
 }

@@ -9,10 +9,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.tripbook.dto.FlightDetailResponse;
 import com.tripbook.dto.FlightSearchResponse;
 import com.tripbook.dto.PagedResponse;
+import com.tripbook.dto.SeatResponse;
+import com.tripbook.entity.Flight;
 import com.tripbook.exception.BadRequestException;
+import com.tripbook.exception.NotFoundException;
 import com.tripbook.repository.FlightRepository;
+import com.tripbook.repository.FlightSeatRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -22,12 +27,32 @@ import jakarta.persistence.Query;
 public class FlightService {
 
     private final FlightRepository flightRepository;
+    private final FlightSeatRepository flightSeatRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public FlightService(FlightRepository flightRepository) {
+    public FlightService(FlightRepository flightRepository, FlightSeatRepository flightSeatRepository) {
         this.flightRepository = flightRepository;
+        this.flightSeatRepository = flightSeatRepository;
+    }
+
+    // 2 queries total for a detail call: findById, then the seats lookup below.
+    // Fixed regardless of how many seats a flight has, so this isn't N+1 —
+    // N+1 would be one seats query per flight in a *list*, not per request.
+    public FlightDetailResponse getDetail(Long id) {
+        Flight flight = flightRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Flight not found: " + id));
+
+        List<SeatResponse> seats = flightSeatRepository.findByFlight_IdOrderById(id).stream()
+                .map(SeatResponse::from)
+                .toList();
+
+        return new FlightDetailResponse(
+                flight.getId(), flight.getFlightCode(), flight.getAirline(),
+                flight.getOrigin(), flight.getDestination(),
+                flight.getDepartureTime(), flight.getArrivalTime(),
+                flight.getPrice(), flight.getTotalSeats(), seats);
     }
 
     /**
