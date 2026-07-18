@@ -24,7 +24,7 @@ This file is a sequential execution plan for Claude Code.
 - [x] Phase 0 — Repository & environment scaffold
 - [x] Phase 1 — Domain model & database schema
 - [x] Phase 2 — Authentication (JWT)
-- [ ] Phase 3 — Flight & hotel CRUD + search
+- [x] Phase 3 — Flight & hotel CRUD + search
 - [ ] Phase 4 — Booking with pessimistic locking
 - [ ] Phase 5 — Redis caching
 - [ ] Phase 6 — Horizontal scaling (nginx + 2 instances)
