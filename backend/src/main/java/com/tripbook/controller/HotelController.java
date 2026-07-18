@@ -4,10 +4,12 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tripbook.dto.HotelDetailResponse;
 import com.tripbook.dto.HotelSearchResponse;
 import com.tripbook.dto.PagedResponse;
 import com.tripbook.service.HotelService;
@@ -32,5 +34,10 @@ public class HotelController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return hotelService.search(city, checkIn, checkOut, guests, sort, page, size);
+    }
+
+    @GetMapping("/{id}")
+    public HotelDetailResponse getById(@PathVariable Long id) {
+        return hotelService.getDetail(id);
     }
 }

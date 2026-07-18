@@ -7,9 +7,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.tripbook.dto.HotelDetailResponse;
 import com.tripbook.dto.HotelSearchResponse;
 import com.tripbook.dto.PagedResponse;
+import com.tripbook.dto.RoomResponse;
+import com.tripbook.entity.Hotel;
 import com.tripbook.exception.BadRequestException;
+import com.tripbook.exception.NotFoundException;
+import com.tripbook.repository.HotelRepository;
+import com.tripbook.repository.HotelRoomRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -18,8 +24,29 @@ import jakarta.persistence.Query;
 @Service
 public class HotelService {
 
+    private final HotelRepository hotelRepository;
+    private final HotelRoomRepository hotelRoomRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
+
+    public HotelService(HotelRepository hotelRepository, HotelRoomRepository hotelRoomRepository) {
+        this.hotelRepository = hotelRepository;
+        this.hotelRoomRepository = hotelRoomRepository;
+    }
+
+    public HotelDetailResponse getDetail(Long id) {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Hotel not found: " + id));
+
+        List<RoomResponse> rooms = hotelRoomRepository.findByHotel_IdOrderById(id).stream()
+                .map(RoomResponse::from)
+                .toList();
+
+        return new HotelDetailResponse(
+                hotel.getId(), hotel.getName(), hotel.getCity(), hotel.getAddress(),
+                hotel.getPricePerNight(), hotel.getStarRating(), rooms);
+    }
 
     /**
      * The schema (Phase 1) tracks room status as a single AVAILABLE/BOOKED
