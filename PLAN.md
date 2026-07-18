@@ -26,7 +26,7 @@ This file is a sequential execution plan for Claude Code.
 - [x] Phase 2 — Authentication (JWT)
 - [x] Phase 3 — Flight & hotel CRUD + search
 - [x] Phase 4 — Booking with pessimistic locking
-- [ ] Phase 5 — Redis caching
+- [x] Phase 5 — Redis caching
 - [ ] Phase 6 — Horizontal scaling (nginx + 2 instances)
 - [ ] Phase 7 — Concurrency proof (load test)
 - [ ] Phase 8 — Kafka event-driven notifications
