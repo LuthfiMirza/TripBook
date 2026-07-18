@@ -5,6 +5,7 @@ import java.security.SecureRandom;
 import java.time.temporal.ChronoUnit;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import com.tripbook.entity.Booking;
 import com.tripbook.entity.FlightSeat;
 import com.tripbook.entity.HotelRoom;
 import com.tripbook.entity.User;
+import com.tripbook.event.BookingConfirmedEvent;
 import com.tripbook.exception.BadRequestException;
 import com.tripbook.exception.NotFoundException;
 import com.tripbook.exception.SeatUnavailableException;
@@ -39,17 +41,20 @@ public class BookingService {
     private final FlightSeatRepository flightSeatRepository;
     private final HotelRoomRepository hotelRoomRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final SecureRandom random = new SecureRandom();
 
     public BookingService(
             BookingRepository bookingRepository,
             FlightSeatRepository flightSeatRepository,
             HotelRoomRepository hotelRoomRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            ApplicationEventPublisher eventPublisher) {
         this.bookingRepository = bookingRepository;
         this.flightSeatRepository = flightSeatRepository;
         this.hotelRoomRepository = hotelRoomRepository;
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -74,7 +79,9 @@ public class BookingService {
                 .status(CONFIRMED)
                 .build();
 
-        return BookingResponse.from(bookingRepository.save(booking));
+        booking = bookingRepository.save(booking);
+        eventPublisher.publishEvent(toEvent(booking));
+        return BookingResponse.from(booking);
     }
 
     @Transactional
@@ -108,7 +115,9 @@ public class BookingService {
                 .status(CONFIRMED)
                 .build();
 
-        return BookingResponse.from(bookingRepository.save(booking));
+        booking = bookingRepository.save(booking);
+        eventPublisher.publishEvent(toEvent(booking));
+        return BookingResponse.from(booking);
     }
 
     @Transactional(readOnly = true)
@@ -177,5 +186,33 @@ public class BookingService {
             value.append(REFERENCE_ALPHABET.charAt(random.nextInt(REFERENCE_ALPHABET.length())));
         }
         return value.toString();
+    }
+
+    private BookingConfirmedEvent toEvent(Booking booking) {
+        String itemSummary;
+        if ("FLIGHT".equals(booking.getBookingType())) {
+            FlightSeat seat = booking.getFlightSeat();
+            itemSummary = "%s %s-%s seat %s".formatted(
+                    seat.getFlight().getFlightCode(),
+                    seat.getFlight().getOrigin(),
+                    seat.getFlight().getDestination(),
+                    seat.getSeatNumber());
+        } else {
+            HotelRoom room = booking.getHotelRoom();
+            itemSummary = "%s room %s (%s to %s)".formatted(
+                    room.getHotel().getName(),
+                    room.getRoomNumber(),
+                    booking.getCheckIn(),
+                    booking.getCheckOut());
+        }
+
+        return new BookingConfirmedEvent(
+                booking.getBookingReference(),
+                booking.getUser().getId(),
+                booking.getUser().getEmail(),
+                booking.getBookingType(),
+                itemSummary,
+                booking.getTotalPrice(),
+                booking.getCreatedAt());
     }
 }
