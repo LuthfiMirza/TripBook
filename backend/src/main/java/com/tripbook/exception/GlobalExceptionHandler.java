@@ -16,6 +16,8 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.tripbook.dto.ErrorResponse;
 
+import jakarta.validation.ConstraintViolationException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -35,6 +37,27 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(
                 HttpStatus.CONFLICT.value(), "Conflict", ex.getMessage(), path(request)));
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(), "Bad Request", ex.getMessage(), path(request)));
+    }
+
+    // Thrown by @Validated on a controller when a @RequestParam fails a
+    // constraint (e.g. a past date) — a different exception type than body
+    // validation, which is why it needs its own handler.
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
+        Map<String, String> fieldErrors = new HashMap<>();
+        ex.getConstraintViolations().forEach(v -> {
+            String path = v.getPropertyPath().toString();
+            String field = path.contains(".") ? path.substring(path.lastIndexOf('.') + 1) : path;
+            fieldErrors.put(field, v.getMessage());
+        });
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(), "Bad Request", "Validation failed", path(request), fieldErrors));
     }
 
     @ExceptionHandler(NotFoundException.class)
