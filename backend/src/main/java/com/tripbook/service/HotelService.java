@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbook.dto.HotelDetailResponse;
+import com.tripbook.dto.HotelRequest;
 import com.tripbook.dto.HotelSearchResponse;
 import com.tripbook.dto.PagedResponse;
 import com.tripbook.dto.RoomResponse;
@@ -75,11 +77,14 @@ public class HotelService {
 
         String orderBy = "price_desc".equals(sort) ? "h.price_per_night DESC" : "h.price_per_night ASC";
 
+        // LEFT JOIN, not JOIN: an admin-created hotel with no rooms yet must
+        // still appear in search (with availableRooms=0), not disappear because
+        // an inner join has nothing to match.
         String dataSql = """
                 SELECT h.id, h.name, h.city, h.address, h.price_per_night, h.star_rating,
                        COUNT(hr.id) FILTER (WHERE hr.status = 'AVAILABLE') AS available_rooms
                 FROM hotels h
-                JOIN hotel_rooms hr ON hr.hotel_id = h.id
+                LEFT JOIN hotel_rooms hr ON hr.hotel_id = h.id
                 WHERE h.city = :city
                 GROUP BY h.id
                 ORDER BY %s
@@ -110,5 +115,42 @@ public class HotelService {
                 .getSingleResult()).longValue();
 
         return new PagedResponse<>(content, page, size, total);
+    }
+
+    // Unlike flights, the plan doesn't call for auto-generating rooms on hotel
+    // creation — an admin adds rooms separately. A freshly created hotel is
+    // valid with zero rooms (search now reflects that correctly via LEFT JOIN).
+    public HotelDetailResponse createHotel(HotelRequest request) {
+        Hotel hotel = Hotel.builder()
+                .name(request.name())
+                .city(request.city())
+                .address(request.address())
+                .pricePerNight(request.pricePerNight())
+                .starRating(request.starRating())
+                .build();
+        hotel = hotelRepository.save(hotel);
+        return getDetail(hotel.getId());
+    }
+
+    public HotelDetailResponse updateHotel(Long id, HotelRequest request) {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Hotel not found: " + id));
+
+        hotel.setName(request.name());
+        hotel.setCity(request.city());
+        hotel.setAddress(request.address());
+        hotel.setPricePerNight(request.pricePerNight());
+        hotel.setStarRating(request.starRating());
+        hotelRepository.save(hotel);
+
+        return getDetail(id);
+    }
+
+    @Transactional
+    public void deleteHotel(Long id) {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Hotel not found: " + id));
+        hotelRoomRepository.deleteAll(hotelRoomRepository.findByHotel_IdOrderById(id));
+        hotelRepository.delete(hotel);
     }
 }
