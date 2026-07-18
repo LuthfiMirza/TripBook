@@ -24,6 +24,15 @@ spring:
 server:
   port: 8080
 
+app:
+  jwt:
+    # Dev-only fallback secret (32+ bytes for HS256). Override with the
+    # JWT_SECRET env var in any real deployment.
+    secret: ${JWT_SECRET:tripbook-dev-only-secret-please-override-in-prod-0123456789}
+    expiration-ms: 86400000 # 24h
+  cors:
+    allowed-origin: ${FRONTEND_ORIGIN:http://localhost:3000}
+
 logging:
   level:
     org.flywaydb: INFO
