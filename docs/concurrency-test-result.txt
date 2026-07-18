@@ -1,0 +1,392 @@
+===== PHASE 7 RUN 1/3 (2 instances) =====
+== TripBook concurrency test ==
+timestamp: 2026-07-18T05:36:11Z
+base_url: http://localhost:8080
+n: 50
+flight_id: 1
+seat_number: 12F
+flight_seat_id: 72
+expect_both_instances: 1
+== Reset seat and related bookings ==
+DELETE 1
+UPDATE 1
+ id | seat_number |  status   
+----+-------------+-----------
+ 72 | 12F         | AVAILABLE
+(1 row)
+
+== Register/login 50 users ==
+      50 /var/folders/2b/m02glmln5h35pybfr57z64rc0000gn/T/tmp.ALuI7nPj9K/tokens.txt
+== Fire 50 simultaneous booking requests ==
+request=03 status=409 instance=backend-1 time_total=0.082690
+request=04 status=201 instance=backend-1 time_total=0.077715
+request=06 status=409 instance=backend-1 time_total=0.068845
+request=08 status=409 instance=backend-1 time_total=0.049599
+request=10 status=409 instance=backend-1 time_total=0.115636
+request=12 status=409 instance=backend-1 time_total=0.058088
+request=14 status=409 instance=backend-1 time_total=0.038894
+request=16 status=409 instance=backend-1 time_total=0.027711
+request=18 status=409 instance=backend-1 time_total=0.050114
+request=20 status=409 instance=backend-1 time_total=0.051764
+request=22 status=409 instance=backend-1 time_total=0.041308
+request=24 status=409 instance=backend-1 time_total=0.026659
+request=26 status=409 instance=backend-1 time_total=0.029632
+request=28 status=409 instance=backend-1 time_total=0.052424
+request=30 status=409 instance=backend-1 time_total=0.043165
+request=34 status=409 instance=backend-1 time_total=0.147095
+request=33 status=409 instance=backend-1 time_total=0.157639
+request=36 status=409 instance=backend-1 time_total=0.037694
+request=38 status=409 instance=backend-1 time_total=0.032080
+request=40 status=409 instance=backend-1 time_total=0.035413
+request=42 status=409 instance=backend-1 time_total=0.034668
+request=43 status=409 instance=backend-1 time_total=0.034715
+request=46 status=409 instance=backend-1 time_total=0.035526
+request=48 status=409 instance=backend-1 time_total=0.038290
+request=50 status=409 instance=backend-1 time_total=0.031858
+request=07 status=409 instance=backend-2 time_total=1.637634
+request=17 status=409 instance=backend-2 time_total=1.354354
+request=44 status=409 instance=backend-2 time_total=0.783212
+request=32 status=409 instance=backend-2 time_total=1.057233
+request=23 status=409 instance=backend-2 time_total=1.271397
+request=41 status=409 instance=backend-2 time_total=0.814878
+request=13 status=409 instance=backend-2 time_total=1.474782
+request=37 status=409 instance=backend-2 time_total=0.909647
+request=49 status=409 instance=backend-2 time_total=0.746887
+request=09 status=409 instance=backend-2 time_total=1.623789
+request=15 status=409 instance=backend-2 time_total=1.439431
+request=31 status=409 instance=backend-2 time_total=1.150603
+request=02 status=409 instance=backend-2 time_total=1.765268
+request=39 status=409 instance=backend-2 time_total=0.935429
+request=27 status=409 instance=backend-2 time_total=1.300204
+request=45 status=409 instance=backend-2 time_total=0.959403
+request=29 status=409 instance=backend-2 time_total=1.337544
+request=47 status=409 instance=backend-2 time_total=0.946881
+request=05 status=409 instance=backend-2 time_total=1.848241
+request=19 status=409 instance=backend-2 time_total=1.533264
+request=01 status=409 instance=backend-2 time_total=1.898841
+request=25 status=409 instance=backend-2 time_total=1.462786
+request=21 status=409 instance=backend-2 time_total=1.522604
+request=11 status=409 instance=backend-2 time_total=1.722965
+request=35 status=409 instance=backend-2 time_total=1.237894
+== Status summary ==
+201_count=1
+409_count=49
+500_count=0
+all_statuses:
+   1 201
+  49 409
+== Instances served ==
+  25 backend-1
+  25 backend-2
+== Slowest request ==
+file=/var/folders/2b/m02glmln5h35pybfr57z64rc0000gn/T/tmp.ALuI7nPj9K/responses/response-1.txt.meta time_total=1.898841 status=409
+== DB verification ==
+ booking_count 
+---------------
+             1
+(1 row)
+
+ status 
+--------
+ BOOKED
+(1 row)
+
+booking_count=1
+== Assertions ==
+RESULT=PASS
+saved_result_file: /Applications/XAMPP/xamppfiles/htdocs/TripBook/docs/concurrency-test-result.txt
+===== PHASE 7 RUN 2/3 (2 instances) =====
+== TripBook concurrency test ==
+timestamp: 2026-07-18T05:36:38Z
+base_url: http://localhost:8080
+n: 50
+flight_id: 1
+seat_number: 12F
+flight_seat_id: 72
+expect_both_instances: 1
+== Reset seat and related bookings ==
+DELETE 1
+UPDATE 1
+ id | seat_number |  status   
+----+-------------+-----------
+ 72 | 12F         | AVAILABLE
+(1 row)
+
+== Register/login 50 users ==
+      50 /var/folders/2b/m02glmln5h35pybfr57z64rc0000gn/T/tmp.qa2s9qwHAu/tokens.txt
+== Fire 50 simultaneous booking requests ==
+request=01 status=201 instance=backend-1 time_total=0.072818
+request=07 status=409 instance=backend-1 time_total=0.037778
+request=03 status=409 instance=backend-1 time_total=0.063924
+request=02 status=409 instance=backend-2 time_total=0.085291
+request=05 status=409 instance=backend-2 time_total=0.066004
+request=04 status=409 instance=backend-1 time_total=0.068165
+request=08 status=409 instance=backend-1 time_total=0.062588
+request=09 status=409 instance=backend-2 time_total=0.084452
+request=06 status=409 instance=backend-2 time_total=0.104756
+request=10 status=409 instance=backend-2 time_total=0.092060
+request=12 status=409 instance=backend-1 time_total=0.082169
+request=14 status=409 instance=backend-1 time_total=0.086425
+request=15 status=409 instance=backend-1 time_total=0.072755
+request=11 status=409 instance=backend-2 time_total=0.103828
+request=17 status=409 instance=backend-1 time_total=0.080458
+request=13 status=409 instance=backend-2 time_total=0.112154
+request=16 status=409 instance=backend-2 time_total=0.105662
+request=19 status=409 instance=backend-1 time_total=0.056979
+request=18 status=409 instance=backend-2 time_total=0.089454
+request=20 status=409 instance=backend-2 time_total=0.082405
+request=21 status=409 instance=backend-1 time_total=0.069524
+request=23 status=409 instance=backend-1 time_total=0.037672
+request=22 status=409 instance=backend-2 time_total=0.086961
+request=25 status=409 instance=backend-1 time_total=0.057770
+request=24 status=409 instance=backend-2 time_total=0.082409
+request=27 status=409 instance=backend-1 time_total=0.048655
+request=29 status=409 instance=backend-1 time_total=0.038588
+request=26 status=409 instance=backend-2 time_total=0.094748
+request=28 status=409 instance=backend-2 time_total=0.065221
+request=30 status=409 instance=backend-2 time_total=0.046499
+request=31 status=409 instance=backend-1 time_total=0.070916
+request=32 status=409 instance=backend-2 time_total=0.081913
+request=33 status=409 instance=backend-1 time_total=0.062749
+request=34 status=409 instance=backend-2 time_total=0.077542
+request=35 status=409 instance=backend-1 time_total=0.065539
+request=36 status=409 instance=backend-2 time_total=0.068975
+request=37 status=409 instance=backend-1 time_total=0.054721
+request=39 status=409 instance=backend-1 time_total=0.035839
+request=40 status=409 instance=backend-2 time_total=0.044358
+request=38 status=409 instance=backend-2 time_total=0.085288
+request=41 status=409 instance=backend-1 time_total=0.048203
+request=42 status=409 instance=backend-2 time_total=0.055135
+request=43 status=409 instance=backend-1 time_total=0.044028
+request=45 status=409 instance=backend-1 time_total=0.030744
+request=44 status=409 instance=backend-2 time_total=0.065445
+request=47 status=409 instance=backend-1 time_total=0.032610
+request=46 status=409 instance=backend-2 time_total=0.052335
+request=49 status=409 instance=backend-1 time_total=0.026217
+request=48 status=409 instance=backend-2 time_total=0.050512
+request=50 status=409 instance=backend-2 time_total=0.038960
+== Status summary ==
+201_count=1
+409_count=49
+500_count=0
+all_statuses:
+   1 201
+  49 409
+== Instances served ==
+  25 backend-1
+  25 backend-2
+== Slowest request ==
+file=/var/folders/2b/m02glmln5h35pybfr57z64rc0000gn/T/tmp.qa2s9qwHAu/responses/response-13.txt.meta time_total=0.112154 status=409
+== DB verification ==
+ booking_count 
+---------------
+             1
+(1 row)
+
+ status 
+--------
+ BOOKED
+(1 row)
+
+booking_count=1
+== Assertions ==
+RESULT=PASS
+saved_result_file: /Applications/XAMPP/xamppfiles/htdocs/TripBook/docs/concurrency-test-result.txt
+===== PHASE 7 RUN 3/3 (2 instances) =====
+== TripBook concurrency test ==
+timestamp: 2026-07-18T05:37:03Z
+base_url: http://localhost:8080
+n: 50
+flight_id: 1
+seat_number: 12F
+flight_seat_id: 72
+expect_both_instances: 1
+== Reset seat and related bookings ==
+DELETE 1
+UPDATE 1
+ id | seat_number |  status   
+----+-------------+-----------
+ 72 | 12F         | AVAILABLE
+(1 row)
+
+== Register/login 50 users ==
+      50 /var/folders/2b/m02glmln5h35pybfr57z64rc0000gn/T/tmp.8QSrbLU7QB/tokens.txt
+== Fire 50 simultaneous booking requests ==
+request=02 status=201 instance=backend-1 time_total=0.131417
+request=01 status=409 instance=backend-2 time_total=0.159348
+request=06 status=409 instance=backend-1 time_total=0.095147
+request=04 status=409 instance=backend-1 time_total=0.168091
+request=03 status=409 instance=backend-2 time_total=0.174128
+request=07 status=409 instance=backend-1 time_total=0.075227
+request=10 status=409 instance=backend-1 time_total=0.070832
+request=09 status=409 instance=backend-2 time_total=0.087067
+request=11 status=409 instance=backend-1 time_total=0.073163
+request=14 status=409 instance=backend-1 time_total=0.068112
+request=05 status=409 instance=backend-2 time_total=0.147070
+request=13 status=409 instance=backend-2 time_total=0.114289
+request=08 status=409 instance=backend-2 time_total=0.148203
+request=12 status=409 instance=backend-2 time_total=0.124902
+request=15 status=409 instance=backend-2 time_total=0.124446
+request=16 status=409 instance=backend-1 time_total=0.124592
+request=18 status=409 instance=backend-1 time_total=0.063940
+request=17 status=409 instance=backend-1 time_total=0.068368
+request=22 status=409 instance=backend-1 time_total=0.068393
+request=21 status=409 instance=backend-2 time_total=0.092265
+request=24 status=409 instance=backend-1 time_total=0.054047
+request=20 status=409 instance=backend-2 time_total=0.132310
+request=23 status=409 instance=backend-2 time_total=0.109635
+request=19 status=409 instance=backend-2 time_total=0.140454
+request=26 status=409 instance=backend-1 time_total=0.069308
+request=27 status=409 instance=backend-2 time_total=0.077186
+request=28 status=409 instance=backend-1 time_total=0.079206
+request=25 status=409 instance=backend-2 time_total=0.136306
+request=29 status=409 instance=backend-2 time_total=0.078250
+request=30 status=409 instance=backend-1 time_total=0.068771
+request=31 status=409 instance=backend-2 time_total=0.055865
+request=32 status=409 instance=backend-1 time_total=0.070565
+request=34 status=409 instance=backend-1 time_total=0.053141
+request=33 status=409 instance=backend-2 time_total=0.084301
+request=36 status=409 instance=backend-1 time_total=0.028222
+request=35 status=409 instance=backend-2 time_total=0.077831
+request=38 status=409 instance=backend-1 time_total=0.044712
+request=37 status=409 instance=backend-2 time_total=0.119991
+request=39 status=409 instance=backend-1 time_total=0.084732
+request=41 status=409 instance=backend-2 time_total=0.069265
+request=40 status=409 instance=backend-2 time_total=0.092235
+request=42 status=409 instance=backend-1 time_total=0.042445
+request=44 status=409 instance=backend-1 time_total=0.030662
+request=45 status=409 instance=backend-1 time_total=0.034062
+request=43 status=409 instance=backend-2 time_total=0.085570
+request=48 status=409 instance=backend-1 time_total=0.029483
+request=47 status=409 instance=backend-2 time_total=0.040095
+request=46 status=409 instance=backend-2 time_total=0.081668
+request=50 status=409 instance=backend-1 time_total=0.039335
+request=49 status=409 instance=backend-2 time_total=0.042343
+== Status summary ==
+201_count=1
+409_count=49
+500_count=0
+all_statuses:
+   1 201
+  49 409
+== Instances served ==
+  25 backend-1
+  25 backend-2
+== Slowest request ==
+file=/var/folders/2b/m02glmln5h35pybfr57z64rc0000gn/T/tmp.8QSrbLU7QB/responses/response-3.txt.meta time_total=0.174128 status=409
+== DB verification ==
+ booking_count 
+---------------
+             1
+(1 row)
+
+ status 
+--------
+ BOOKED
+(1 row)
+
+booking_count=1
+== Assertions ==
+RESULT=PASS
+saved_result_file: /Applications/XAMPP/xamppfiles/htdocs/TripBook/docs/concurrency-test-result.txt
+===== PHASE 7 RUN 4 (backend-2 stopped) =====
+== TripBook concurrency test ==
+timestamp: 2026-07-18T05:38:28Z
+base_url: http://localhost:8080
+n: 50
+flight_id: 1
+seat_number: 12F
+flight_seat_id: 72
+expect_both_instances: 0
+== Reset seat and related bookings ==
+DELETE 1
+UPDATE 1
+ id | seat_number |  status   
+----+-------------+-----------
+ 72 | 12F         | AVAILABLE
+(1 row)
+
+== Register/login 50 users ==
+      50 /var/folders/2b/m02glmln5h35pybfr57z64rc0000gn/T/tmp.FAAOtbqpO6/tokens.txt
+== Fire 50 simultaneous booking requests ==
+request=02 status=409 instance=backend-1 time_total=0.075078
+request=06 status=409 instance=backend-1 time_total=0.070208
+request=01 status=201 instance=backend-1 time_total=0.090532
+request=03 status=409 instance=backend-1 time_total=0.089087
+request=04 status=409 instance=backend-1 time_total=0.094136
+request=08 status=409 instance=backend-1 time_total=0.035188
+request=05 status=409 instance=backend-1 time_total=0.094481
+request=07 status=409 instance=backend-1 time_total=0.088763
+request=09 status=409 instance=backend-1 time_total=0.045327
+request=10 status=409 instance=backend-1 time_total=0.049597
+request=12 status=409 instance=backend-1 time_total=0.031929
+request=11 status=409 instance=backend-1 time_total=0.036814
+request=14 status=409 instance=backend-1 time_total=0.030202
+request=13 status=409 instance=backend-1 time_total=0.039219
+request=15 status=409 instance=backend-1 time_total=0.033762
+request=17 status=409 instance=backend-1 time_total=0.032772
+request=16 status=409 instance=backend-1 time_total=0.037887
+request=19 status=409 instance=backend-1 time_total=0.029426
+request=18 status=409 instance=backend-1 time_total=0.043648
+request=20 status=409 instance=backend-1 time_total=0.029992
+request=21 status=409 instance=backend-1 time_total=0.020938
+request=22 status=409 instance=backend-1 time_total=0.018861
+request=23 status=409 instance=backend-1 time_total=0.019384
+request=24 status=409 instance=backend-1 time_total=0.020262
+request=25 status=409 instance=backend-1 time_total=0.023642
+request=26 status=409 instance=backend-1 time_total=0.023370
+request=27 status=409 instance=backend-1 time_total=0.026065
+request=29 status=409 instance=backend-1 time_total=0.017082
+request=30 status=409 instance=backend-1 time_total=0.026935
+request=31 status=409 instance=backend-1 time_total=0.032202
+request=28 status=409 instance=backend-1 time_total=0.059035
+request=33 status=409 instance=backend-1 time_total=0.029919
+request=32 status=409 instance=backend-1 time_total=0.038217
+request=34 status=409 instance=backend-1 time_total=0.019825
+request=35 status=409 instance=backend-1 time_total=0.030329
+request=36 status=409 instance=backend-1 time_total=0.019961
+request=37 status=409 instance=backend-1 time_total=0.018805
+request=38 status=409 instance=backend-1 time_total=0.019470
+request=39 status=409 instance=backend-1 time_total=0.019819
+request=40 status=409 instance=backend-1 time_total=0.019901
+request=41 status=409 instance=backend-1 time_total=0.021857
+request=42 status=409 instance=backend-1 time_total=0.021490
+request=43 status=409 instance=backend-1 time_total=0.026789
+request=44 status=409 instance=backend-1 time_total=0.024097
+request=45 status=409 instance=backend-1 time_total=0.024778
+request=46 status=409 instance=backend-1 time_total=0.021643
+request=47 status=409 instance=backend-1 time_total=0.020717
+request=48 status=409 instance=backend-1 time_total=0.022448
+request=49 status=409 instance=backend-1 time_total=0.022769
+request=50 status=409 instance=backend-1 time_total=0.019606
+== Status summary ==
+201_count=1
+409_count=49
+500_count=0
+all_statuses:
+   1 201
+  49 409
+== Instances served ==
+  50 backend-1
+== Slowest request ==
+file=/var/folders/2b/m02glmln5h35pybfr57z64rc0000gn/T/tmp.FAAOtbqpO6/responses/response-5.txt.meta time_total=0.094481 status=409
+== DB verification ==
+ booking_count 
+---------------
+             1
+(1 row)
+
+ status 
+--------
+ BOOKED
+(1 row)
+
+booking_count=1
+== Assertions ==
+RESULT=PASS
+saved_result_file: /Applications/XAMPP/xamppfiles/htdocs/TripBook/docs/concurrency-test-result.txt
+===== restart backend-2 =====
+NAME                IMAGE             COMMAND                  SERVICE     CREATED          STATUS                  PORTS
+infra-backend-1-1   infra-backend-1   "java -jar /app/app.…"   backend-1   13 minutes ago   Up 13 minutes           8080/tcp
+infra-backend-2-1   infra-backend-2   "java -jar /app/app.…"   backend-2   13 minutes ago   Up Less than a second   8080/tcp
+infra-nginx-1       infra-nginx       "/docker-entrypoint.…"   nginx       13 minutes ago   Up 13 minutes           0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp

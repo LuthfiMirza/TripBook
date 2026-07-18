@@ -28,7 +28,7 @@ This file is a sequential execution plan for Claude Code.
 - [x] Phase 4 — Booking with pessimistic locking
 - [x] Phase 5 — Redis caching
 - [x] Phase 6 — Horizontal scaling (nginx + 2 instances)
-- [ ] Phase 7 — Concurrency proof (load test)
+- [x] Phase 7 — Concurrency proof (load test)
 - [ ] Phase 8 — Kafka event-driven notifications
 - [ ] Phase 9 — Frontend scaffold & auth
 - [ ] Phase 10 — Frontend search & results
