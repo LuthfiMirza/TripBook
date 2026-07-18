@@ -30,7 +30,7 @@ This file is a sequential execution plan for Claude Code.
 - [x] Phase 6 — Horizontal scaling (nginx + 2 instances)
 - [x] Phase 7 — Concurrency proof (load test)
 - [x] Phase 8 — Kafka event-driven notifications
-- [ ] Phase 9 — Frontend scaffold & auth
+- [x] Phase 9 — Frontend scaffold & auth
 - [ ] Phase 10 — Frontend search & results
 - [ ] Phase 11 — Frontend booking flow & my bookings
 - [ ] Phase 12 — Frontend polish & animation
