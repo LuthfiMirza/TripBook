@@ -9,8 +9,10 @@ services:
       POSTGRES_DB: tripbook
       POSTGRES_USER: tripbook
       POSTGRES_PASSWORD: tripbook
+    # Host port is parametrized so TripBook can coexist with another local
+    # Postgres. Default stays 5432; override with TRIPBOOK_DB_PORT if it's taken.
     ports:
-      - "5432:5432"
+      - "${TRIPBOOK_DB_PORT:-5432}:5432"
     volumes:
       - tripbook-postgres-data:/var/lib/postgresql/data
     healthcheck:

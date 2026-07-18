@@ -21,7 +21,7 @@ This file is a sequential execution plan for Claude Code.
 
 **Progress tracker** — tick only after the audit passes:
 
-- [ ] Phase 0 — Repository & environment scaffold
+- [x] Phase 0 — Repository & environment scaffold
 - [ ] Phase 1 — Domain model & database schema
 - [ ] Phase 2 — Authentication (JWT)
 - [ ] Phase 3 — Flight & hotel CRUD + search
