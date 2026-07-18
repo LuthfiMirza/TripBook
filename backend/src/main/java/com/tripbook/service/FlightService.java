@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tripbook.dto.FlightDetailResponse;
+import com.tripbook.dto.FlightRequest;
 import com.tripbook.dto.FlightSearchResponse;
 import com.tripbook.dto.PagedResponse;
 import com.tripbook.dto.SeatResponse;
 import com.tripbook.entity.Flight;
+import com.tripbook.entity.FlightSeat;
 import com.tripbook.exception.BadRequestException;
 import com.tripbook.exception.NotFoundException;
 import com.tripbook.repository.FlightRepository;
@@ -146,5 +149,93 @@ public class FlightService {
                 .getSingleResult()).longValue();
 
         return new PagedResponse<>(content, page, size, total);
+    }
+
+    private static final String[] SEAT_LETTERS = { "A", "B", "C", "D", "E", "F" };
+    private static final int SEATS_PER_ROW = SEAT_LETTERS.length;
+    private static final int BUSINESS_ROWS = 2;
+
+    @Transactional
+    public FlightDetailResponse createFlight(FlightRequest request) {
+        Flight flight = Flight.builder()
+                .flightCode(request.flightCode())
+                .airline(request.airline())
+                .origin(request.origin())
+                .destination(request.destination())
+                .departureTime(request.departureTime())
+                .arrivalTime(request.arrivalTime())
+                .price(request.price())
+                .totalSeats(request.totalSeats())
+                .build();
+        flight = flightRepository.save(flight);
+
+        generateSeats(flight);
+
+        return getDetail(flight.getId());
+    }
+
+    // Rows of 6 (A-F), first 2 rows BUSINESS, rest ECONOMY, per the plan's spec.
+    // A remainder under 6 becomes one partial final row so the generated seat
+    // count always matches totalSeats exactly, even when it isn't a multiple of 6.
+    private void generateSeats(Flight flight) {
+        int totalSeats = flight.getTotalSeats();
+        int fullRows = totalSeats / SEATS_PER_ROW;
+        int remainder = totalSeats % SEATS_PER_ROW;
+
+        List<FlightSeat> seats = new ArrayList<>(totalSeats);
+        int row = 1;
+        for (; row <= fullRows; row++) {
+            String seatClass = row <= BUSINESS_ROWS ? "BUSINESS" : "ECONOMY";
+            for (String letter : SEAT_LETTERS) {
+                seats.add(FlightSeat.builder()
+                        .flight(flight)
+                        .seatNumber(row + letter)
+                        .seatClass(seatClass)
+                        .status("AVAILABLE")
+                        .build());
+            }
+        }
+        if (remainder > 0) {
+            String seatClass = row <= BUSINESS_ROWS ? "BUSINESS" : "ECONOMY";
+            for (int i = 0; i < remainder; i++) {
+                seats.add(FlightSeat.builder()
+                        .flight(flight)
+                        .seatNumber(row + SEAT_LETTERS[i])
+                        .seatClass(seatClass)
+                        .status("AVAILABLE")
+                        .build());
+            }
+        }
+        flightSeatRepository.saveAll(seats);
+    }
+
+    // Updates the flight's own fields only — it deliberately does not touch
+    // existing flight_seats rows. Changing totalSeats after seats (and
+    // potentially bookings, from Phase 4 on) already exist is a data-migration
+    // decision, not something a blind PUT should do implicitly.
+    @Transactional
+    public FlightDetailResponse updateFlight(Long id, FlightRequest request) {
+        Flight flight = flightRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Flight not found: " + id));
+
+        flight.setFlightCode(request.flightCode());
+        flight.setAirline(request.airline());
+        flight.setOrigin(request.origin());
+        flight.setDestination(request.destination());
+        flight.setDepartureTime(request.departureTime());
+        flight.setArrivalTime(request.arrivalTime());
+        flight.setPrice(request.price());
+        flight.setTotalSeats(request.totalSeats());
+        flightRepository.save(flight);
+
+        return getDetail(id);
+    }
+
+    @Transactional
+    public void deleteFlight(Long id) {
+        Flight flight = flightRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Flight not found: " + id));
+        flightSeatRepository.deleteAll(flightSeatRepository.findByFlight_IdOrderById(id));
+        flightRepository.delete(flight);
     }
 }

@@ -58,6 +58,7 @@ public class SecurityConfig {
                         // it needs a real authenticated principal.
                         .requestMatchers("/api/health", "/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/flights/**", "/api/hotels/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
