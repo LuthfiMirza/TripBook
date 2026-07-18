@@ -1,0 +1,2 @@
+@tailwind base;@tailwind components;@tailwind utilities;
+:root{color-scheme:light} body{background:#F8FAFC;color:#475569} .display{font-family:var(--font-space),ui-sans-serif}.curved{clip-path:ellipse(85% 100% at 50% 0%)}

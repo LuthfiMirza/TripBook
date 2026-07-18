@@ -1,0 +1,4 @@
+import { NextResponse, type NextRequest } from 'next/server';import { API_BASE_URL } from '@/lib/api';
+export async function POST(req:NextRequest){const body=await req.json();const res=NextResponse.json({user:body.user});res.cookies.set('tripbook_token',body.token,{httpOnly:true,sameSite:'lax',secure:false,path:'/',maxAge:60*60*24});return res;}
+export async function GET(req:NextRequest){const token=req.cookies.get('tripbook_token')?.value;if(!token)return NextResponse.json({user:null},{status:401});const api=await fetch(`${API_BASE_URL}/api/auth/me`,{headers:{Authorization:`Bearer ${token}`},cache:'no-store'});return NextResponse.json({user:api.ok?await api.json():null},{status:api.ok?200:401});}
+export async function DELETE(){const res=NextResponse.json({ok:true});res.cookies.delete('tripbook_token');return res;}

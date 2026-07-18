@@ -1,0 +1,1 @@
+export default function Search(){return <main className="mx-auto min-h-screen max-w-5xl pt-28"><h1 className="display text-4xl font-bold text-heading">Search TripBook</h1><p className="mt-3">Flight and hotel search arrives next.</p></main>}

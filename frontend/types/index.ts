@@ -1,0 +1,11 @@
+export type ApiErrorShape={timestamp:string;status:number;error:string;message:string;path:string;fieldErrors?:Record<string,string>|null};
+export type User={id:number;email:string;fullName:string;role:string;createdAt:string};
+export type AuthResponse={token:string;user:User};
+export type PagedResponse<T>={content:T[];page:number;size:number;totalElements:number};
+export type FlightSearchResponse={id:number;flightCode:string;airline:string;origin:string;destination:string;departureTime:string;arrivalTime:string;price:number;availableSeats:number};
+export type HotelSearchResponse={id:number;name:string;city:string;address:string;pricePerNight:number;starRating:number|null;availableRooms:number};
+export type Seat={id:number;seatNumber:string;seatClass:string;status:string};
+export type FlightDetail={id:number;flightCode:string;airline:string;origin:string;destination:string;departureTime:string;arrivalTime:string;price:number;totalSeats:number;seats:Seat[]};
+export type Room={id:number;roomNumber:string;roomType:string;status:string};
+export type HotelDetail={id:number;name:string;city:string;address:string;pricePerNight:number;starRating:number|null;rooms:Room[]};
+export type Booking={bookingReference:string;bookingType:string;status:string;totalPrice:number;checkIn?:string;checkOut?:string;createdAt:string;flight?:{flightId:number;flightCode:string;airline:string;origin:string;destination:string;departureTime:string;arrivalTime:string;seatNumber:string;seatClass:string};hotel?:{hotelId:number;name:string;city:string;roomNumber:string;roomType:string}};

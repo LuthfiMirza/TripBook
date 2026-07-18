@@ -1,0 +1,1 @@
+export default function Bookings(){return <main className="mx-auto min-h-screen max-w-5xl pt-28"><h1 className="display text-4xl font-bold text-heading">My Bookings</h1><p className="mt-3">Your bookings will appear here.</p></main>}

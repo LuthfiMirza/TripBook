@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function Home(){return <main className="min-h-screen pt-28"><section className="mx-auto max-w-6xl rounded-[2rem] bg-primary px-8 py-24 text-center text-white"><h1 className="display text-7xl font-black md:text-9xl">TripBook</h1><p className="mt-4 text-xl">Book flights and hotels with calm, reliable inventory.</p><Link className="mt-8 inline-block rounded-full bg-accent px-8 py-4 font-bold text-heading" href="/search">Start searching</Link></section></main>}
