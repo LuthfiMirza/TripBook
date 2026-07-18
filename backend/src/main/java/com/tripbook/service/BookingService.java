@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.temporal.ChronoUnit;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class BookingService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = { "flightSearch", "flightDetail" }, allEntries = true)
     public BookingResponse bookFlight(String email, FlightBookingRequest request) {
         User user = currentUser(email);
         FlightSeat seat = flightSeatRepository
@@ -76,6 +78,7 @@ public class BookingService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = { "hotelSearch", "hotelDetail" }, allEntries = true)
     public BookingResponse bookHotel(String email, HotelBookingRequest request) {
         if (!request.checkOut().isAfter(request.checkIn())) {
             throw new BadRequestException("checkOut must be after checkIn");
@@ -125,6 +128,7 @@ public class BookingService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = { "flightSearch", "flightDetail", "hotelSearch", "hotelDetail" }, allEntries = true)
     public BookingResponse cancel(String email, String reference) {
         Booking booking = findOwnedBooking(email, reference);
         if (CANCELLED.equals(booking.getStatus())) {

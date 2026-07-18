@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +45,7 @@ public class FlightService {
     // 2 queries total for a detail call: findById, then the seats lookup below.
     // Fixed regardless of how many seats a flight has, so this isn't N+1 —
     // N+1 would be one seats query per flight in a *list*, not per request.
+    @Cacheable(cacheNames = "flightDetail", key = "#id")
     public FlightDetailResponse getDetail(Long id) {
         Flight flight = flightRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Flight not found: " + id));
@@ -70,6 +73,7 @@ public class FlightService {
      * query below. Neither runs once per row, so there is no N+1.
      */
     @SuppressWarnings("unchecked")
+    @Cacheable(cacheNames = "flightSearch", key = "#origin + ':' + #destination + ':' + #date + ':' + #passengers + ':' + (#sort ?: 'default') + ':' + #page + ':' + #size")
     public PagedResponse<FlightSearchResponse> search(
             String origin, String destination, LocalDate date, int passengers,
             String sort, int page, int size) {
@@ -156,6 +160,7 @@ public class FlightService {
     private static final int BUSINESS_ROWS = 2;
 
     @Transactional
+    @CacheEvict(cacheNames = { "flightSearch", "flightDetail" }, allEntries = true)
     public FlightDetailResponse createFlight(FlightRequest request) {
         Flight flight = Flight.builder()
                 .flightCode(request.flightCode())
@@ -214,6 +219,7 @@ public class FlightService {
     // potentially bookings, from Phase 4 on) already exist is a data-migration
     // decision, not something a blind PUT should do implicitly.
     @Transactional
+    @CacheEvict(cacheNames = { "flightSearch", "flightDetail" }, allEntries = true)
     public FlightDetailResponse updateFlight(Long id, FlightRequest request) {
         Flight flight = flightRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Flight not found: " + id));
@@ -232,6 +238,7 @@ public class FlightService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = { "flightSearch", "flightDetail" }, allEntries = true)
     public void deleteFlight(Long id) {
         Flight flight = flightRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Flight not found: " + id));

@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,7 @@ public class HotelService {
         this.hotelRoomRepository = hotelRoomRepository;
     }
 
+    @Cacheable(cacheNames = "hotelDetail", key = "#id")
     public HotelDetailResponse getDetail(Long id) {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Hotel not found: " + id));
@@ -61,6 +64,7 @@ public class HotelService {
      * availability. Same simplification as flights' seat availability.
      */
     @SuppressWarnings("unchecked")
+    @Cacheable(cacheNames = "hotelSearch", key = "#city + ':' + #checkIn + ':' + #checkOut + ':' + #guests + ':' + (#sort ?: 'default') + ':' + #page + ':' + #size")
     public PagedResponse<HotelSearchResponse> search(
             String city, LocalDate checkIn, LocalDate checkOut, int guests,
             String sort, int page, int size) {
@@ -120,6 +124,7 @@ public class HotelService {
     // Unlike flights, the plan doesn't call for auto-generating rooms on hotel
     // creation — an admin adds rooms separately. A freshly created hotel is
     // valid with zero rooms (search now reflects that correctly via LEFT JOIN).
+    @CacheEvict(cacheNames = { "hotelSearch", "hotelDetail" }, allEntries = true)
     public HotelDetailResponse createHotel(HotelRequest request) {
         Hotel hotel = Hotel.builder()
                 .name(request.name())
@@ -132,6 +137,7 @@ public class HotelService {
         return getDetail(hotel.getId());
     }
 
+    @CacheEvict(cacheNames = { "hotelSearch", "hotelDetail" }, allEntries = true)
     public HotelDetailResponse updateHotel(Long id, HotelRequest request) {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Hotel not found: " + id));
@@ -147,6 +153,7 @@ public class HotelService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = { "hotelSearch", "hotelDetail" }, allEntries = true)
     public void deleteHotel(Long id) {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Hotel not found: " + id));

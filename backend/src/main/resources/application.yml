@@ -7,6 +7,11 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:tripbook}
     password: ${SPRING_DATASOURCE_PASSWORD:tripbook}
 
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+
   jpa:
     # Flyway owns the schema — Hibernate must never create or alter tables.
     hibernate:
