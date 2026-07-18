@@ -1,0 +1,3 @@
+import { apiFetch } from '@/lib/api';import { rupiah } from '@/lib/format';import type { HotelDetail } from '@/types';import { HotelBookingClient } from '@/components/booking/HotelBookingClient';
+export const metadata={title:'Hotel details'};
+export default async function HotelPage({params}:{params:{id:string}}){const hotel=await apiFetch<HotelDetail>(`/api/hotels/${params.id}`);return <main className="mx-auto min-h-screen max-w-6xl px-6 pt-28"><header className="mb-6 rounded-2xl bg-primary p-8 text-white"><h1 className="display text-4xl font-bold">{hotel.name}</h1><p>{hotel.city} · {rupiah(Number(hotel.pricePerNight))}/night</p></header><HotelBookingClient hotel={hotel}/></main>}
