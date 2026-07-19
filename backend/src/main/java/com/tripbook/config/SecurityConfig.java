@@ -67,6 +67,9 @@ public class SecurityConfig {
                         // permitting it means that forward is never itself blocked.
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/health", "/api/auth/register", "/api/auth/login").permitAll()
+                        // API documentation is read-only reference material, not a
+                        // secured resource — no reason to require a JWT to view it.
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/flights/**", "/api/hotels/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
