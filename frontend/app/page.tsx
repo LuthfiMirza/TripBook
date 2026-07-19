@@ -54,7 +54,7 @@ export default function Home() {
             <h2 className="display text-4xl font-bold text-heading">Explore Top Destinations</h2>
             <button className="grid h-12 w-12 place-items-center rounded-full bg-primary text-white transition hover:rotate-[-8deg]">→</button>
           </Reveal>
-          <div className="flex gap-5 overflow-x-auto pb-4">
+          <div className="no-scrollbar flex gap-5 overflow-x-auto pb-4">
             {destinations.map(([img, name, copy, price], i) => (
               <Reveal key={img} delay={i * 0.08} className="min-w-56">
                 <Card className="p-3 transition hover:-translate-y-1 hover:shadow-xl">
