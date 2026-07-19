@@ -34,8 +34,8 @@ This file is a sequential execution plan for Claude Code.
 - [x] Phase 10 — Frontend search & results
 - [x] Phase 11 — Frontend booking flow & my bookings
 - [x] Phase 12 — Frontend polish & animation
-- [ ] Phase 13 — Unit tests
-- [ ] Phase 14 — Documentation & architecture diagram
+- [x] Phase 13 — Unit tests
+- [x] Phase 14 — Documentation & architecture diagram
 
 ---
 
